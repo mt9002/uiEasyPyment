@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_application_1/src/app/dto/login_dto';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,15 +20,36 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // Función para manejar el inicio de sesión
-  void _login() {
+  Future<void> _login() async {
     if (_formKey.currentState?.validate() ?? false) {
-      // Aquí puedes agregar la lógica para enviar los datos
-      // Al iniciar sesión, podrías navegar a la siguiente pantalla
-      print('Correo: ${_emailController.text}');
-      print('Contraseña: ${_passwordController.text}');
+      String email = _emailController.text;
+      String password = _passwordController.text;
+      LoginDTO loginDTO = LoginDTO(email: email, password: password);
 
-      // Ejemplo de navegación hacia la pantalla de inicio (Home)
-      Navigator.pushNamed(context, '/home');
+      // solicitud POST
+      try {
+        Uri url = Uri.parse('http://192.168.20.50:8080/auth/login');
+        var client = http.Client();
+        final response = await client.post(
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+          body: json.encode(loginDTO.toJson()),
+        );
+
+        if (response.statusCode == 200) {
+          print('Login exitoso');
+          Navigator.pushNamed(context, '/home');
+          
+        } else {
+            print('Error al iniciar sesión: ${response.body}');
+            Navigator.pushNamed(context, '/login');
+        }
+      } catch (e) {
+          print('Error al conectar con la API: $e');
+      }
     }
   }
 
