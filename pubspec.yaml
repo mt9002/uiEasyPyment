@@ -12,11 +12,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  flutter_dotenv: ^5.2.1
   cupertino_icons: ^1.0.8
   provider: ^6.1.5
   get_it: ^8.0.3
   http: ^1.4.0
+  dio: ^5.8.0+1
 
 dev_dependencies:
   flutter_test:
@@ -28,5 +29,6 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/gif1.gif
+    - assets/.env
 
   uses-material-design: true

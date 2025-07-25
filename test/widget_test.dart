@@ -5,34 +5,34 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:first_app/src/features/auth/application/login_service.dart';
-import 'package:first_app/src/features/auth/domain/usecases/LoginUseCase.dart';
+import 'package:first_app/src/features/auth/domain/interfaces/login_repository.dart';
+import 'package:first_app/src/features/auth/domain/usecases/login_use_case.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-class MockLoginUseCase extends Mock implements LoginUseCase {}
+class MockLoginImp extends Mock implements ILoginRepository {}
 
 void main() {
-  late MockLoginUseCase mockLoginUseCase;
-  late LoginService loginService;
+  late MockLoginImp mockLoginRepository;
+  late LoginUseCase loginUseCase;
 
   setUp(() {
-    mockLoginUseCase = MockLoginUseCase();
-    loginService = LoginService(mockLoginUseCase);
+    mockLoginRepository = MockLoginImp();
+    loginUseCase = LoginUseCase(mockLoginRepository);
   });
 
     test('login returns true when credentials are correct', () async {
       // Arrange
       String email = 'test@email.com';
       String password = '1234';
-      when(mockLoginUseCase.execute(email, password))
+      when(mockLoginRepository.login(email, password))
           .thenAnswer((_) async => true);
 
       // Act
-      final result = await loginService.login(email, password);
+      final result = await loginUseCase.login(email, password);
   
       // Assert
       expect(result, true);
-      verify(mockLoginUseCase.execute('test@email.com', '1234')).called(1);
+      verify(mockLoginRepository.login('test@email.com', '1234')).called(1);
     });
   }

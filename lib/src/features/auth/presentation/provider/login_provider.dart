@@ -1,26 +1,34 @@
 // presentation/providers/login_provider.dart
-import 'package:first_app/src/features/auth/application/login_service.dart';
 import 'package:first_app/src/features/auth/domain/entities/login.dart';
+import 'package:first_app/src/features/auth/domain/usecases/login_use_case.dart';
 import 'package:flutter/material.dart';
 
 class LoginProvider extends ChangeNotifier {
-  final LoginService loginService;
+  final LoginUseCase loginUseCase;
 
-  LoginProvider(this.loginService);
+  LoginProvider(this.loginUseCase);
 
   bool isLoading = false;
-  bool? resp;
+  bool? _resp;
   String? error;
 
   Credentials credentialsEntity = Credentials.empty();
 
+  bool? get getResp => _resp;
+
   void setEmail(String email) {
     credentialsEntity.setEmail(email);
-    print('Email-provedor: ${credentialsEntity.email}');
   }
 
   void setPassword(String password) {
     credentialsEntity.setPassword(password);
+  }
+
+  String? validatorFilds(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Este campo es obligatorio';
+    }
+    return null;
   }
 
   Future<void> login() async {
@@ -29,13 +37,13 @@ class LoginProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final result = await loginService.login(
-          credentialsEntity.email, credentialsEntity.password);
-      if (result == null) {
+      await Future.delayed(const Duration(seconds: 4));
+      _resp = await loginUseCase.login(
+        credentialsEntity.getEmail,
+        credentialsEntity.getPassword,
+      );
+      if (_resp == false) {
         error = 'Credenciales incorrectas';
-      } else {
-        resp = result;
-        
       }
     } catch (e) {
       error = 'Error inesperado: $e';
@@ -45,22 +53,3 @@ class LoginProvider extends ChangeNotifier {
     }
   }
 }
-
-
-  // Future<void> login(String email, String password) async {
-  //   isLoading = true;
-  //   error = null;
-  //   notifyListeners();
-
-  //   try {
-  //     resp = await loginService.login(email, password);
-  //     if (resp == false) {
-  //       error = "Credenciales inválidas";
-  //     }
-  //   } catch (e) {
-  //     error = "Error del servidor";
-  //   } finally {
-  //     isLoading = false;
-  //     notifyListeners();
-  //   }
-  // }

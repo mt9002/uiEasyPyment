@@ -8,7 +8,7 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<LoginProvider>();
+    final loginProvider = context.watch<LoginProvider>();
     return Scaffold(
         appBar: AppBar(title: const Text("Login")),
         body: Padding(
@@ -16,42 +16,30 @@ class LoginPage extends StatelessWidget {
           child: Column(
             children: [
               TextField(
-                decoration: const InputDecoration(labelText: 'Email'),
-                onChanged: controller.setEmail,
-              ),
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  onChanged: loginProvider.setEmail),
               TextField(
-                decoration: const InputDecoration(labelText: 'Contraseña'),
-                obscureText: true,
-                onChanged: controller.setPassword,
-              ),
+                  decoration: const InputDecoration(labelText: 'Contraseña'),
+                  obscureText: true,
+                  onChanged: loginProvider.setPassword),
               const SizedBox(height: 16),
-              if (controller.isLoading)
-                const CircularProgressIndicator()
-              else
-                ElevatedButton(
-                  onPressed: () async {
-                    await controller.login();
-                    if (!context.mounted) return;
-                    if (controller.resp == true) {
-                      Navigator.pushNamed(context, '/home');
-                    }
-                  },
-                  child: const Text('Iniciar sesión'),
-                ),
-              if (controller.error != null) ...[
+              (loginProvider.isLoading)
+                  ? const CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: () async {
+                        await loginProvider.login();
+                        if (!context.mounted) return;
+                        if (loginProvider.getResp == true) {
+                          Navigator.pushNamed(context, '/home');
+                        }
+                      },
+                      child: const Text('Iniciar sesión'),
+                    ),
+              if (loginProvider.error != null) ...[
                 const SizedBox(height: 16),
-                Text(
-                  controller.error!,
-                  style: const TextStyle(color: Colors.red),
-                ),
+                Text(loginProvider.error!,
+                    style: const TextStyle(color: Colors.red)),
               ],
-              // if (controller.user != null) ...[
-              //   const SizedBox(height: 16),
-              //   Text(
-              //     'Bienvenido, ${controller.user!.email}',
-              //     style: const TextStyle(color: Colors.green),
-              //   )
-              // ]
             ],
           ),
         ));

@@ -1,3 +1,3 @@
-abstract class ILoginRepository {
+abstract interface class ILoginRepository {
   Future<bool> login(String email, String password);
 }
