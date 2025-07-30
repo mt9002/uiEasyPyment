@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 class Request {
   
   Future<Response> post(final uri, String accessToken, body) async {
-    final response = http.post(
+    final response = http.post( 
       Uri.parse(uri),
       headers: {
         'Accept': 'application/json',

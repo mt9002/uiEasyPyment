@@ -1,4 +1,5 @@
 import 'package:first_app/src/features/auth/domain/interfaces/login_repository.dart';
+import 'package:first_app/src/features/auth/domain/usecases/prefs_token.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -18,7 +19,8 @@ class LoginRepositoryImpl implements ILoginRepository {
       print('Response status: ${response.statusCode}');
       if (response.statusCode == 200) {
         final body = json.decode(response.body);
-        print('Token recibido: ${body['data']}');
+        
+        await AuthService.saveToken(body['data']); // guardar el token
         return true;
       } else {
         print('Error en la solicitud: ${response.statusCode}');

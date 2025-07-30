@@ -1,47 +1,48 @@
 import 'package:first_app/src/features/bill/domain/bill.dart';
 import 'package:first_app/src/features/bill/domain/bill_use_case.dart';
 import 'package:first_app/src/features/bill/domain/response.dart';
+import 'package:first_app/src/features/bill/presentation/provider/bil_dto.dart';
 import 'package:flutter/material.dart';
 
 class BillProvider extends ChangeNotifier {
   final BillUseCase _billUseCase;
-  Response<Bill?>? _resp;
-  String _event;
-  String _mesa;
-  bool isLoading = false;
-  bool isDatosEnviados = false;
+  final BillDTO _billDTO = BillDTO();
+  Response<dynamic>? _resp = Response.noData();
 
-  BillProvider(this._billUseCase)
-      : _event = '',
-        _mesa = '';
-
-  String? validatorFilds(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Este campo es obligatorio';
-    }
-    return null;
-  }
+  BillProvider(this._billUseCase);
 
   Future<void> createBill() async {
-    isLoading = true;
-    notifyListeners();
+    _setUIState(OperationStatus.loading);
 
-    _resp = await _billUseCase.addBill(Bill(event: _event, mesa: _mesa));
-
-    isLoading = false;
-    isDatosEnviados = true;
-    notifyListeners();
+    _resp = await _billUseCase.addBill(Bill(
+      event: _billDTO.getEvent,
+      mesa: _billDTO.getMesa,
+    ));
+    if (_resp?.getResultState == ResultState.error) {
+      _setResultState(ResultState.error);
+    }
+    _setUIState(OperationStatus.sending);
+    
   }
 
-  get getEvent => _event;
-  get getMesa => _mesa;
-  Response<Bill?>? get getResp => _resp;
+  Response<dynamic>? get getResp => _resp;
+  BillDTO get getBillDTO => _billDTO;
 
   void setEvent(String value) {
-    _event = value;
-  }
+    _billDTO.setEvent(value);
+  } 
 
   void setMesa(String value) {
-    _mesa = value;
+    _billDTO.setMesa(value);
+  }
+
+  void _setUIState(OperationStatus uiState) {
+    _resp!.setOperationStatus(uiState);
+    notifyListeners();
+  }
+
+  void _setResultState(ResultState result) {
+    _resp?.setResultState(result);
+    notifyListeners();
   }
 }

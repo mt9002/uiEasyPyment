@@ -30,7 +30,7 @@ class LoginPage extends StatelessWidget {
                         await loginProvider.login();
                         if (!context.mounted) return;
                         if (loginProvider.getResp == true) {
-                          Navigator.pushNamed(context, '/home');
+                          Navigator.pushNamed(context, '/bill');
                         }
                       },
                       child: const Text('Iniciar sesión'),

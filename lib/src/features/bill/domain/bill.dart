@@ -2,8 +2,8 @@ import 'package:first_app/src/features/bill/domain/personal_expenser.dart';
 
 class Bill {
   final int ?id;
-  final String event;
-  final String mesa;
+  final String? event;
+  final String? mesa;
   final List<PersonalExpenses> ?personalExpenses;
 
   Bill({

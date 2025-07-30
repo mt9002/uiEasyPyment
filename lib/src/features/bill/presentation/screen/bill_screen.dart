@@ -23,8 +23,8 @@ class BillScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (!billProvider.isDatosEnviados)
-              if (billProvider.isLoading)
+            if (!billProvider.getResp?.isSending)
+              if (billProvider.getResp?.isLoading)
                 const CircularProgressIndicator()
               else
                 Form(
@@ -34,9 +34,9 @@ class BillScreen extends StatelessWidget {
                       TextFormField(
                         controller: TextEditingController(),
                         validator: (value) {
-                          return billProvider.validatorFilds(value);
+                          return billProvider.getBillDTO.validateFields(value, "evento");
                         },
-                        onChanged: billProvider.setEvent,
+                        onChanged: billProvider.getBillDTO.setEvent,
                         decoration: const InputDecoration(
                             labelText: 'Evento', border: OutlineInputBorder()),
                       ),
@@ -44,7 +44,7 @@ class BillScreen extends StatelessWidget {
                       TextFormField(
                           controller: TextEditingController(),
                           validator: (value) {
-                            return billProvider.validatorFilds(value);
+                            return billProvider.getBillDTO.validateFields(value, "mesa");
                           },
                           decoration: const InputDecoration(
                             labelText: 'Mesa',
@@ -93,7 +93,7 @@ class BillScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Evento: ${billProvider.getEvent}',
+                        'Evento: ${billProvider.getBillDTO.getEvent}',
                         style: Theme.of(context)
                             .textTheme
                             .headlineSmall
@@ -104,7 +104,7 @@ class BillScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Mesa: ${billProvider.getMesa}',
+                        'Mesa: ${billProvider.getBillDTO.getMesa}',
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   color: Theme.of(context)
@@ -125,9 +125,9 @@ class BillScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            if (billProvider.getResp?.getResultState == ResultState.error)
+            if (billProvider.getResp?.isError)
               Text(
-                'Para registrar gastos personales, por favor crea una cuenta primero.',
+                billProvider.getResp?.message ?? 'Error al crear la cuenta',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),

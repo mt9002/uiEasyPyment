@@ -11,7 +11,7 @@ class AppRoot extends StatelessWidget {
     return MaterialApp(
       title: 'application',
       theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple), useMaterial3: true),
-      initialRoute: '/bill',
+      initialRoute: '/login',
       routes: {
         '/bill': (context) =>  BillScreen(), 
         '/login': (context) => const LoginPage(),
